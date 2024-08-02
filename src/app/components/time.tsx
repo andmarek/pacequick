@@ -8,6 +8,9 @@ interface timeProps {
 
 export default function Time({ setHours, setMinutes, setSeconds }: timeProps) {
   function formatTimeInput(value: string): number {
+    if (value == '') {
+      value = '0';
+    }
     try {
       const floatVal = parseFloat(value);
       if (floatVal < 0) {

@@ -27,7 +27,6 @@ function calculatePace(totalSeconds: number, distanceUnit: string, distance: num
 }
 
 export default function Home() {
-
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
@@ -47,6 +46,7 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center space-y-2 m-2">
       <Distance
+        distance={distance}
         setDistance={setDistance}
         setDistanceUnit={setDistanceUnits}
         distanceUnit={distanceUnits}
