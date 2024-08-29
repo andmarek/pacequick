@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Button,
   Modal,
@@ -19,6 +19,8 @@ import {
   GridItem,
   Heading,
   Box,
+  Input,
+  HStack,
 } from "@chakra-ui/react";
 
 import Distance from "./components/distance";
@@ -73,7 +75,20 @@ export default function Home() {
     setResult(pace);
   }, [hours, minutes, seconds, distance, distanceUnits, resultUnit]);
 
-  const splitDistances = [100, 200, 400, 800, 1600];
+  const [splitDistances, setSplitDistances] = useState([100, 200, 400, 800, 1600]);
+  const [customSplitDistance, setCustomSplitDistance] = useState("");
+
+  const addCustomSplit = useCallback(() => {
+    const newSplit = parseInt(customSplitDistance, 10);
+    if (!isNaN(newSplit) && newSplit > 0) {
+      setSplitDistances(prev => [...prev, newSplit].sort((a, b) => a - b));
+      setCustomSplitDistance("");
+    }
+  }, [customSplitDistance]);
+
+  const removeCustomSplit = useCallback((splitToRemove: number) => {
+    setSplitDistances(prev => prev.filter(split => split !== splitToRemove));
+  }, []);
 
   return (
     <main className="flex flex-col items-center space-y-2 m-2">
@@ -132,11 +147,27 @@ export default function Home() {
               
               <Box>
                 <Heading size="sm" mb={4}>Split Times</Heading>
+                <HStack mb={4}>
+                  <Input
+                    placeholder="Custom split distance (m)"
+                    value={customSplitDistance}
+                    onChange={(e) => setCustomSplitDistance(e.target.value)}
+                    type="number"
+                  />
+                  <Button onClick={addCustomSplit}>Add</Button>
+                </HStack>
                 <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                   {splitDistances.map((splitDistance) => (
                     <GridItem key={splitDistance}>
-                      <Text fontWeight="bold">{splitDistance}m:</Text>
-                      <Text>{calculateSplitPace(seconds + minutes * 60 + hours * 3600, distanceUnits, distance, splitDistance)}</Text>
+                      <HStack justifyContent="space-between">
+                        <VStack align="start">
+                          <Text fontWeight="bold">{splitDistance}m:</Text>
+                          <Text>{calculateSplitPace(seconds + minutes * 60 + hours * 3600, distanceUnits, distance, splitDistance)}</Text>
+                        </VStack>
+                        {![100, 200, 400, 800, 1600].includes(splitDistance) && (
+                          <Button size="sm" onClick={() => removeCustomSplit(splitDistance)}>Remove</Button>
+                        )}
+                      </HStack>
                     </GridItem>
                   ))}
                 </Grid>
