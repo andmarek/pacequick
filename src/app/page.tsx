@@ -13,6 +13,12 @@ import {
   useDisclosure,
   VStack,
   Text,
+  useColorMode,
+  Divider,
+  Grid,
+  GridItem,
+  Heading,
+  Box,
 } from "@chakra-ui/react";
 
 import Distance from "./components/distance";
@@ -60,6 +66,7 @@ export default function Home() {
   const [result, setResult] = useState("");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { colorMode } = useColorMode();
 
   useEffect(() => {
     const pace = calculatePace(seconds + (minutes * 60) + (hours * 3600), distanceUnits, distance, resultUnit);
@@ -79,46 +86,69 @@ export default function Home() {
       <Time setHours={setHours} setMinutes={setMinutes} setSeconds={setSeconds} />
       <Result resultUnit={resultUnit} calculatedResult={result} setResultUnit={setResultUnit} />
       
-      <Button
-        onClick={onOpen}
-        bg="black"
-        color="white"
-        _hover={{ bg: "gray.800" }}
-        _active={{ bg: "gray.700" }}
-      >
-        View Split Paces
-      </Button>
+      {distance > 0 && (
+        <Button
+          onClick={onOpen}
+          bg={colorMode === 'dark' ? 'white' : 'black'}
+          color={colorMode === 'dark' ? 'black' : 'white'}
+          _hover={{ bg: colorMode === 'dark' ? 'gray.200' : 'gray.800' }}
+          _active={{ bg: colorMode === 'dark' ? 'gray.300' : 'gray.700' }}
+        >
+          View Splits
+        </Button>
+      )}
 
-      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" isCentered>
-        <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
+      <Modal isOpen={isOpen} onClose={onClose} scrollBehavior="inside" isCentered size="lg">
+        <ModalOverlay bg={colorMode === 'dark' ? 'blackAlpha.600' : 'blackAlpha.300'} backdropFilter="blur(10px)" />
         <ModalContent
           mx={4}
           my={4}
-          maxW={{ base: "90%", md: "400px" }}
-          bg="whiteAlpha.800"
-          backdropFilter="blur(10px)"
+          bg={colorMode === 'dark' ? 'gray.800' : 'white'}
+          color={colorMode === 'dark' ? 'white' : 'black'}
+          borderRadius="xl"
+          boxShadow="2xl"
         >
-          <ModalHeader>Split Paces</ModalHeader>
+          <ModalHeader>
+            <Heading size="lg">Splits</Heading>
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <VStack spacing={4} align="stretch">
-              <Text fontWeight="bold">Input Summary:</Text>
-              <Text>Distance: {distance} {distanceUnits}</Text>
-              <Text>Time: {hours}h {minutes}m {seconds}s</Text>
-              <Text fontWeight="bold">Split Paces:</Text>
-              {splitDistances.map((splitDistance) => (
-                <Text key={splitDistance}>
-                  {splitDistance}m: {calculateSplitPace(seconds + minutes * 60 + hours * 3600, distanceUnits, distance, splitDistance)}
-                </Text>
-              ))}
+            <VStack spacing={6} align="stretch">
+              <Box bg={colorMode === 'dark' ? 'gray.700' : 'gray.100'} p={4} borderRadius="md">
+                <Heading size="sm" mb={2}>Input Summary</Heading>
+                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                  <GridItem>
+                    <Text fontWeight="bold">Distance:</Text>
+                    <Text>{distance} {distanceUnits}</Text>
+                  </GridItem>
+                  <GridItem>
+                    <Text fontWeight="bold">Time:</Text>
+                    <Text>{hours}h {minutes}m {seconds}s</Text>
+                  </GridItem>
+                </Grid>
+              </Box>
+              
+              <Divider />
+              
+              <Box>
+                <Heading size="sm" mb={4}>Split Times</Heading>
+                <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                  {splitDistances.map((splitDistance) => (
+                    <GridItem key={splitDistance}>
+                      <Text fontWeight="bold">{splitDistance}m:</Text>
+                      <Text>{calculateSplitPace(seconds + minutes * 60 + hours * 3600, distanceUnits, distance, splitDistance)}</Text>
+                    </GridItem>
+                  ))}
+                </Grid>
+              </Box>
             </VStack>
           </ModalBody>
           <ModalFooter>
             <Button
-              bg="black"
-              color="white"
-              _hover={{ bg: "gray.800" }}
-              _active={{ bg: "gray.700" }}
+              bg={colorMode === 'dark' ? 'white' : 'black'}
+              color={colorMode === 'dark' ? 'black' : 'white'}
+              _hover={{ bg: colorMode === 'dark' ? 'gray.200' : 'gray.800' }}
+              _active={{ bg: colorMode === 'dark' ? 'gray.300' : 'gray.700' }}
               onClick={onClose}
             >
               Close
