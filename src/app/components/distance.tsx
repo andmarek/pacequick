@@ -33,7 +33,25 @@ export default function Distance({ distance, setDistance, setDistanceUnit, dista
 
   const handleUnitChange = (newUnit: string) => {
     if (newUnit !== distanceUnit) {
-      const convertedDistance = newUnit === 'km' ? distance * 1.60934 : distance / 1.60934;
+      let convertedDistance = distance;
+
+      // Convert current distance to meters first
+      let distanceInMeters = distance;
+      if (distanceUnit === 'mi') {
+        distanceInMeters = distance * 1609.34;
+      } else if (distanceUnit === 'km') {
+        distanceInMeters = distance * 1000;
+      }
+
+      // Convert from meters to target unit
+      if (newUnit === 'mi') {
+        convertedDistance = distanceInMeters / 1609.34;
+      } else if (newUnit === 'km') {
+        convertedDistance = distanceInMeters / 1000;
+      } else {
+        convertedDistance = distanceInMeters;
+      }
+
       setDistance(Number(convertedDistance.toFixed(2)));
       setDistanceUnit(newUnit);
     }
@@ -53,6 +71,9 @@ export default function Distance({ distance, setDistance, setDistanceUnit, dista
           <p> / </p>
           <p className={`${distanceUnit === "km" ? "font-bold" : ""} cursor-pointer`}
             onClick={() => handleUnitChange("km")}> km </p>
+          <p> / </p>
+          <p className={`${distanceUnit === "m" ? "font-bold" : ""} cursor-pointer`}
+            onClick={() => handleUnitChange("m")}> m </p>
         </span>
         <CommonDistances setDistance={setDistance} currentUnit={distanceUnit} setSelectedValue={setSelectedValue} selectedValue={selectedValue} />
       </div>

@@ -32,14 +32,20 @@ function calculatePace(totalSeconds: number, distanceUnit: string, distance: num
     return "Please enter a distance greater than 0.";
   }
 
+  // Convert distance to miles for calculation
   if (distanceUnit === "km") {
     distance = distance * 0.621371;
+  } else if (distanceUnit === "m") {
+    distance = distance / 1609.34;
   }
 
   let pace = totalSeconds / distance;
 
+  // Convert pace to result unit
   if (resultUnit === "km") {
     pace = pace * 0.621371;
+  } else if (resultUnit === "m") {
+    pace = pace / 1609.34;
   }
 
   let paceMinutes = Math.floor(pace / 60);
@@ -48,7 +54,15 @@ function calculatePace(totalSeconds: number, distanceUnit: string, distance: num
 }
 
 function calculateSplitPace(totalSeconds: number, distanceUnit: string, distance: number, splitDistance: number): string {
-  const totalDistanceInMeters = distanceUnit === "km" ? distance * 1000 : distance * 1609.34;
+  let totalDistanceInMeters: number;
+  if (distanceUnit === "km") {
+    totalDistanceInMeters = distance * 1000;
+  } else if (distanceUnit === "m") {
+    totalDistanceInMeters = distance;
+  } else {
+    totalDistanceInMeters = distance * 1609.34;
+  }
+
   const splitTime = (totalSeconds / totalDistanceInMeters) * splitDistance;
   const splitMinutes = Math.floor(splitTime / 60);
   const splitSeconds = splitTime % 60;

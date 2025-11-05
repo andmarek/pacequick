@@ -34,6 +34,15 @@ export default function Result({
           }}
         >
           km
+        </span>{" "}
+        /{" "}
+        <span
+          className={`${resultUnit == "m" ? "font-bold" : ""} cursor-pointer`}
+          onClick={() => {
+            setResultUnit("m");
+          }}
+        >
+          m
         </span>
         ):
       </Text>
