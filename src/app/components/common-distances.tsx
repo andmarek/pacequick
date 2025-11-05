@@ -12,11 +12,15 @@ export default function CommonDistances({ setDistance, currentUnit, setSelectedV
   function handleSelection(selectionOption: string, currentUnit: string) {
     const values = selectionOption.split(" ");
 
-    const distanceValue = values[0];
-    if (currentUnit == "km") {
-      setDistance(parseFloat(distanceValue));
-    } else {
-      setDistance(parseFloat(distanceValue) * 0.621371);
+    const distanceValue = parseFloat(values[0]);
+
+    // Common distances are in km, convert to current unit
+    if (currentUnit === "km") {
+      setDistance(distanceValue);
+    } else if (currentUnit === "mi") {
+      setDistance(distanceValue * 0.621371);
+    } else if (currentUnit === "m") {
+      setDistance(distanceValue * 1000);
     }
     setSelectedValue(selectionOption);
   }
